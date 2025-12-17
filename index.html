@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Yarn Fever Mahjong - A strategic puzzle game combining Yarn Fever mechanics with Mahjong-style tile matching">
+    <title>🎨 Yarn Fever: Mahjong Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="header-content">
+                <h1 class="game-title">🎨 Yarn Fever: Mahjong</h1>
+                <div class="level-indicator">
+                    <span id="level-display">Level: 1</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="game-main">
+            <!-- Canvas for game rendering -->
+            <canvas id="game-canvas" class="game-canvas"></canvas>
+        </main>
+
+        <!-- Game Info and Controls -->
+        <div class="game-info">
+            <!-- Stats -->
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <span class="stat-label">Moves:</span>
+                    <span id="moves-display" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Score:</span>
+                    <span id="score-display" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Levels:</span>
+                    <span id="level-count" class="stat-value">1/3</span>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="controls-panel">
+                <button id="hint-btn" class="btn btn-secondary" title="Get a hint">💡 Hint</button>
+                <button id="undo-btn" class="btn btn-secondary" title="Undo last move">↩️ Undo</button>
+                <button id="reset-btn" class="btn btn-warning" title="Reset level">🔄 Reset</button>
+                <button id="next-btn" class="btn btn-primary" title="Next level" style="display: none;">➡️ Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Complete Modal -->
+    <div id="level-complete-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎉 Level Complete!</h2>
+            </div>
+            <div class="modal-body">
+                <div class="completion-stats">
+                    <div class="stat-row">
+                        <span>Moves:</span>
+                        <span id="modal-moves">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Score:</span>
+                        <span id="modal-score">0</span>
+                    </div>
+                    <div class="stat-row perfect" id="perfect-bonus" style="display: none;">
+                        <span>🌟 Perfect!</span>
+                        <span>+500</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-next-btn" class="btn btn-primary" onclick="game.nextLevel(); closeModal();">Next Level ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎉 All Levels Complete!</h2>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center; font-size: 24px; margin: 20px 0;">🌟 Congratulations! 🌟</p>
+                <div class="final-stats">
+                    <div class="stat-row">
+                        <span>Total Score:</span>
+                        <span id="final-score">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="location.reload();">Play Again 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="utils.js"></script>
+    <script src="yarn.js"></script>
+    <script src="slot.js"></script>
+    <script src="renderer.js"></script>
+    <script src="level.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
