@@ -6,8 +6,17 @@ let game;
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🎮 Initializing Yarn Fever: Mahjong Edition...');
     
-    game = new Game();
-    game.start();
+    try {
+        game = new Game();
+        if (game && game.canvas) {
+            game.start();
+            console.log('✅ Game started successfully');
+        } else {
+            console.error('❌ Game initialization failed');
+        }
+    } catch (error) {
+        console.error('❌ Error initializing game:', error);
+    }
     
     // Setup button listeners
     setupButtonListeners();
@@ -18,11 +27,40 @@ function setupButtonListeners() {
     const undoBtn = document.getElementById('undo-btn');
     const resetBtn = document.getElementById('reset-btn');
     const nextBtn = document.getElementById('next-btn');
+    const modalNextBtn = document.getElementById('modal-next-btn');
     
-    if (hintBtn) hintBtn.addEventListener('click', () => game.showHint());
-    if (undoBtn) undoBtn.addEventListener('click', () => game.undo());
-    if (resetBtn) resetBtn.addEventListener('click', () => game.reset());
-    if (nextBtn) nextBtn.addEventListener('click', () => game.nextLevel());
+    if (hintBtn) {
+        hintBtn.addEventListener('click', () => {
+            if (game) game.showHint();
+        });
+    }
+    
+    if (undoBtn) {
+        undoBtn.addEventListener('click', () => {
+            if (game) game.undo();
+        });
+    }
+    
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (game) game.reset();
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (game) game.nextLevel();
+        });
+    }
+    
+    if (modalNextBtn) {
+        modalNextBtn.addEventListener('click', () => {
+            if (game) {
+                game.nextLevel();
+                closeModal();
+            }
+        });
+    }
 }
 
 // Modal handlers
@@ -30,14 +68,15 @@ function showLevelComplete(moves, score, isPerfect) {
     const modal = document.getElementById('level-complete-modal');
     if (!modal) return;
     
-    document.getElementById('modal-moves').textContent = moves;
-    document.getElementById('modal-score').textContent = score;
-    
+    const movesEl = document.getElementById('modal-moves');
+    const scoreEl = document.getElementById('modal-score');
     const perfectBonus = document.getElementById('perfect-bonus');
-    if (isPerfect && perfectBonus) {
-        perfectBonus.style.display = 'flex';
-    } else if (perfectBonus) {
-        perfectBonus.style.display = 'none';
+    
+    if (movesEl) movesEl.textContent = moves;
+    if (scoreEl) scoreEl.textContent = score;
+    
+    if (perfectBonus) {
+        perfectBonus.style.display = isPerfect ? 'flex' : 'none';
     }
     
     modal.style.display = 'flex';
@@ -47,7 +86,9 @@ function showGameOver(totalScore) {
     const modal = document.getElementById('game-over-modal');
     if (!modal) return;
     
-    document.getElementById('final-score').textContent = totalScore;
+    const scoreEl = document.getElementById('final-score');
+    if (scoreEl) scoreEl.textContent = totalScore;
+    
     modal.style.display = 'flex';
 }
 
