@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Game</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #f0f0f0; }
+        #game-canvas { 
+            border: 2px solid #333; 
+            background: white;
+            display: block;
+            width: 800px;
+            height: 600px;
+        }
+        .info { margin: 20px 0; font-family: Arial; }
+        button { padding: 10px 20px; margin: 5px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>🎮 Game Test</h1>
+    <div class="info">
+        <div>Level: <span id="level-display">1</span></div>
+        <div>Moves: <span id="moves-display">0</span></div>
+        <div>Score: <span id="score-display">0</span></div>
+        <div>Levels: <span id="level-count">0/3</span></div>
+    </div>
+    <canvas id="game-canvas" width="800" height="600"></canvas>
+    <div class="info">
+        <button id="hint-btn">💡 Hint</button>
+        <button id="undo-btn">↩️ Undo</button>
+        <button id="reset-btn">🔄 Reset</button>
+    </div>
+    <div id="level-complete-modal" style="display:none;"></div>
+    <div id="game-over-modal" style="display:none;"></div>
+
+    <script src="utils.js"></script>
+    <script src="yarn.js"></script>
+    <script src="slot.js"></script>
+    <script src="renderer.js"></script>
+    <script src="level.js"></script>
+    <script src="game.js"></script>
+    <script>
+        // Main initialization
+        let game;
+        
+        function showLevelComplete(moves, score, isPerfect) {
+            alert(`Level Complete! Moves: ${moves}, Score: ${score}`);
+        }
+        
+        function showGameOver(score) {
+            alert(`Game Over! Total Score: ${score}`);
+        }
+        
+        function closeModal() {
+            // No-op for test
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎮 Starting game...');
+            game = new Game();
+            game.start();
+            
+            document.getElementById('hint-btn').addEventListener('click', () => game.showHint());
+            document.getElementById('undo-btn').addEventListener('click', () => game.undo());
+            document.getElementById('reset-btn').addEventListener('click', () => game.reset());
+        });
+    </script>
+</body>
+</html>

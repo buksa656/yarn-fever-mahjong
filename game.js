@@ -2,7 +2,21 @@
 class Game {
     constructor() {
         this.canvas = document.getElementById('game-canvas');
+        if (!this.canvas) {
+            console.error('❌ Canvas not found!');
+            return;
+        }
+        
         this.ctx = this.canvas.getContext('2d');
+        
+        // Set canvas size if not set
+        if (!this.canvas.width || this.canvas.width === 0) {
+            this.canvas.width = 800;
+            this.canvas.height = 600;
+        }
+        
+        console.log(`✅ Canvas: ${this.canvas.width}x${this.canvas.height}`);
+        
         this.renderer = new Renderer(this.canvas, this.ctx);
         this.levelManager = new LevelManager();
         this.currentLevel = 1;
@@ -21,18 +35,23 @@ class Game {
         this.gameLoopId = null;
         this.setupEventListeners();
         this.loadSettings();
+        
+        console.log('✅ Game initialized');
     }
 
     start() {
+        console.log('🎮 Starting game...');
         this.loadLevel(this.currentLevel);
     }
 
     async loadLevel(levelNum) {
-        console.log(`📓 Loading level ${levelNum}...`);
+        console.log(`📍 Loading level ${levelNum}...`);
         const levelData = await this.levelManager.getLevel(levelNum);
         if (!levelData) {
             console.log('🎉 All levels completed!');
-            showGameOver(this.totalScore + this.score);
+            if (typeof showGameOver === 'function') {
+                showGameOver(this.totalScore + this.score);
+            }
             return;
         }
 
@@ -83,6 +102,8 @@ class Game {
         // Sort by layer (ascending) and add to slots
         Object.keys(yarnsBySlot).forEach(slotIdx => {
             const slot = this.tempSlots[slotIdx];
+            if (!slot) return;
+            
             const yarnsForSlot = yarnsBySlot[slotIdx].sort((a, b) => a.layer - b.layer);
             
             yarnsForSlot.forEach(yarnData => {
@@ -129,6 +150,8 @@ class Game {
     }
 
     setupEventListeners() {
+        if (!this.canvas) return;
+        
         // Mouse events
         this.canvas.addEventListener('mousedown', (e) => this.handleStart(e));
         this.canvas.addEventListener('mousemove', (e) => this.handleMove(e));
@@ -155,6 +178,7 @@ class Game {
         const clickedYarn = this.findYarnAt(pos);
         
         if (clickedYarn && clickedYarn.isTopOfStack()) {
+            console.log('🎯 Picked yarn:', clickedYarn.color);
             this.selectedYarn = clickedYarn;
             this.draggedYarn = clickedYarn;
             this.draggedYarn.isDragged = true;
@@ -174,8 +198,11 @@ class Game {
             const targetSlot = this.findSlotAt(pos);
             
             if (targetSlot && targetSlot.canAddYarn(this.draggedYarn)) {
+                console.log('✅ Dropping to slot:', targetSlot.type, targetSlot.id);
                 this.moveYarn(this.draggedYarn, targetSlot);
                 this.createParticles(pos);
+            } else {
+                console.log('❌ Cannot drop here');
             }
             
             this.draggedYarn.dragPosition = null;
@@ -323,7 +350,9 @@ class Game {
             this.updateUI();
             this.playSound('levelComplete');
             
-            showLevelComplete(this.moves, this.score, isPerfect);
+            if (typeof showLevelComplete === 'function') {
+                showLevelComplete(this.moves, this.score, isPerfect);
+            }
             return true;
         }
         return false;
@@ -366,6 +395,7 @@ class Game {
             }
         }
         
+        console.log('❌ No valid moves!');
         alert('No hints available. Try undoing some moves!');
     }
 
@@ -401,10 +431,15 @@ class Game {
     }
 
     updateUI() {
-        document.getElementById('level-display').textContent = `Level: ${this.currentLevel}`;
-        document.getElementById('moves-display').textContent = `Moves: ${this.moves}`;
-        document.getElementById('score-display').textContent = `Score: ${this.totalScore + this.score}`;
-        document.getElementById('level-count').textContent = `${this.completedLevels}/${3}`;
+        const levelEl = document.getElementById('level-display');
+        const movesEl = document.getElementById('moves-display');
+        const scoreEl = document.getElementById('score-display');
+        const countEl = document.getElementById('level-count');
+        
+        if (levelEl) levelEl.textContent = this.currentLevel;
+        if (movesEl) movesEl.textContent = this.moves;
+        if (scoreEl) scoreEl.textContent = this.totalScore + this.score;
+        if (countEl) countEl.textContent = `${this.completedLevels}/3`;
     }
 }
 
